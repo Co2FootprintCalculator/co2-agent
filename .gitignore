@@ -1,0 +1,9 @@
+target/
+out/
+.idea/
+
+*.class
+*.iml
+*.log
+
+/src/main/resources/config.properties
