@@ -5,7 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import util.CO2FootprintProperties;
 
 import java.util.ArrayList;
-import java.util.Map;
+import java.util.HashMap;
 
 import static util.UnitConversion.literToKilogram;
 
@@ -25,7 +25,7 @@ public class Car {
 	public Car(String id, CO2FootprintProperties properties) {
 		// get car data from data base by id
 		RestConsumer restConsumer = new RestConsumer(properties);
-		Map<String,String> data = Map.of("init", "ialize");
+		HashMap<String, String> data = new HashMap<>();
 		try {
 			data = restConsumer.getCarData(id);
 		} catch (JsonProcessingException e) {

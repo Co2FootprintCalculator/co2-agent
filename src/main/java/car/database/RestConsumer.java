@@ -15,12 +15,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.HashMap;
-import java.util.Map;
 
 public class RestConsumer {
 
@@ -129,8 +126,8 @@ public class RestConsumer {
 		return resultNode;
 	}
 
-	public Map<String, String> getCarData(String carID) throws JsonProcessingException {
-		Map<String, String> carMap = new HashMap<>();
+	public HashMap<String, String> getCarData(String carID) throws JsonProcessingException {
+		HashMap<String, String> carMap = new HashMap<>();
 
 		String url = "https://data.opendatasoft.com/api/v2/catalog/datasets/vehicules-commercialises%40public/records/"
 				+ carID
@@ -157,13 +154,11 @@ public class RestConsumer {
 	}
 
 	public InputStream downloadDatabase() throws IOException, InterruptedException {
-		String url = "https://data.opendatasoft.com/api/v2/catalog/datasets/vehicules-commercialises%40public/exports/csv?rows=" + properties.getCarDatabaseRows() + "&timezone=UTC&delimiter=%3B";
+		URL url = new URL("https://data.opendatasoft.com/api/v2/catalog/datasets/vehicules-commercialises%40public/exports/csv?rows=" + properties.getCarDatabaseRows() + "&timezone=UTC&delimiter=%3B");
 
-		HttpClient httpClient = HttpClient.newHttpClient();
-		HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).build();
+		URLConnection urlConnection = url.openConnection();
 
-		HttpResponse<InputStream> httpResponse = httpClient.send(request, HttpResponse.BodyHandlers.ofInputStream());
-		return httpResponse.body();
+		return urlConnection.getInputStream();
 	}
 
 	public static String translateFuelToAgentRepresentation(String fuel) {
