@@ -4,7 +4,6 @@ import calculation.CO2Calculator;
 import calculation.CO2EmissionFactors;
 import car.Car;
 import car.database.Driver;
-import car.database.RestConsumer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -45,7 +44,6 @@ public class VehicleCO2Calculator extends AbstractRESTfulAgentBean {
 	}
 
 
-
 	/**********************************************************/
 	/************************** UTIL **************************/
 	/**********************************************************/
@@ -62,14 +60,10 @@ public class VehicleCO2Calculator extends AbstractRESTfulAgentBean {
 	@Path("/util/electricity/mixes")
 	@Produces("application/json")
 	@Expose(scope = ActionScope.WEBSERVICE)
-	public ObjectNode v1ElectricityMixes() {
-		log.info("New REST request - v1ElectricityMixes() called");
+	public ObjectNode getElectricityMixes() {
+		log.info("New method invocation - getElectricityMixes() called");
 		return CO2EmissionFactors.getMixesAsJson();
 	}
-
-
-
-
 
 
 	/***************************************************/
@@ -84,8 +78,8 @@ public class VehicleCO2Calculator extends AbstractRESTfulAgentBean {
 	@Path("/v2/cars/brands")
 	@Produces("application/json")
 	@Expose(scope = ActionScope.WEBSERVICE)
-	public Serializable v2CarsBrands() {
-		log.info("New REST request - v2CarsBrands() called");
+	public Serializable getBrands() {
+		log.info("New method invocation - getBrands() called");
 
 		IActionDescription template = new Action("ACTION#beans.CarDatabaseBean.getBrands");
 		IActionDescription act = memory.read(template);
@@ -104,8 +98,8 @@ public class VehicleCO2Calculator extends AbstractRESTfulAgentBean {
 	@Path("/v2/cars/brand/models")
 	@Produces("application/json")
 	@Expose(scope = ActionScope.WEBSERVICE)
-	public Serializable v2CarsModels(@QueryParam("brand") String brand) {
-		log.info("New REST request - v2CarsModels(...) called");
+	public Serializable getModelsByBrand(@QueryParam("brand") String brand) {
+		log.info("New method invocation - getModelsByBrand(...) called");
 		IActionDescription template = new Action("ACTION#beans.CarDatabaseBean.getModels");
 		IActionDescription act = memory.read(template);
 
@@ -124,9 +118,9 @@ public class VehicleCO2Calculator extends AbstractRESTfulAgentBean {
 	@Path("/v2/cars/brand/fuel/models")
 	@Produces("application/json")
 	@Expose(scope = ActionScope.WEBSERVICE)
-	public Serializable v2CarsModelsByFuel(@QueryParam("brand") String brand,
+	public Serializable getModelsByBrandAndFuel(@QueryParam("brand") String brand,
 										   @QueryParam("fuel") String fuel) {
-		log.info("New REST request - v2CarsModelsByFuel(...) called");
+		log.info("New method invocation - getModelsByBrandAndFuel(...) called");
 		IActionDescription template = new Action("ACTION#beans.CarDatabaseBean.getModelsByFuel");
 		IActionDescription act = memory.read(template);
 
@@ -146,9 +140,9 @@ public class VehicleCO2Calculator extends AbstractRESTfulAgentBean {
 	@Path("/v2/cars/brand/model/fuel")
 	@Produces("application/json")
 	@Expose(scope = ActionScope.WEBSERVICE)
-	public Serializable v2CarsFuel(@QueryParam("brand") String brand,
+	public Serializable getFuelByBrandAndModel(@QueryParam("brand") String brand,
 								   @QueryParam("model") String model) {
-		log.info("New REST request - v2CarsFuel(...) called");
+		log.info("New method invocation - getFuelByBrandAndModel(...) called");
 		IActionDescription template = new Action("ACTION#beans.CarDatabaseBean.getFuel");
 		IActionDescription act = memory.read(template);
 
@@ -167,8 +161,8 @@ public class VehicleCO2Calculator extends AbstractRESTfulAgentBean {
 	@Path("/v2/cars/brand/fuel")
 	@Produces("application/json")
 	@Expose(scope = ActionScope.WEBSERVICE)
-	public Serializable v2CarsFuelByBrand(@QueryParam("brand") String brand) {
-		log.info("New REST request - v2CarsFuelByBrand(...) called");
+	public Serializable getFuelByBrand(@QueryParam("brand") String brand) {
+		log.info("New method invocation - getFuelByBrand(...) called");
 		IActionDescription template = new Action("ACTION#beans.CarDatabaseBean.getFuelByBrand");
 		IActionDescription act = memory.read(template);
 
@@ -188,11 +182,11 @@ public class VehicleCO2Calculator extends AbstractRESTfulAgentBean {
 	@Path("/v2/cars/brand/model/fuel/id")
 	@Produces("application/json")
 	@Expose(scope = ActionScope.WEBSERVICE)
-	public Serializable v2CarsId(@QueryParam("brand") String brand,
+	public Serializable getCarId(@QueryParam("brand") String brand,
 								 @QueryParam("model") String model,
 								 @QueryParam("fuel") String fuel) {
 
-		log.info("New REST request - v2CarsId(...) called");
+		log.info("New method invocation - getCarId(...) called");
 
 		IActionDescription template = new Action("ACTION#beans.CarDatabaseBean.getCarID");
 		IActionDescription act = memory.read(template);
@@ -203,19 +197,15 @@ public class VehicleCO2Calculator extends AbstractRESTfulAgentBean {
 	}
 
 
-
 	/*************************************************************/
 	/************************ CALCULATION ************************/
 	/*************************************************************/
 
 	/**
-	 * Calculate the CO2 emissions of a car specified by {@code carID} on a route that is identified by the latitude and
-	 *  longitude of its starting point ({@code startLatitude}, {@code startLongitude}) and its destination
-	 *  ({@code destinationLatitude}, {@code destinationLongitude}).
+	 * Calculate the CO2 emissions of a car specified by {@code carID} on a route that is given by the {@code urbanKM},
+	 * {@code nonUrbanKM} and {@code autobahnKM} parameters.
 	 *  If the car is powered by electricity, the electricity mix ({@code mix}) is needed. Otherwise this parameter is
 	 *  simply ignored and can be {@code null}.
-	 * @implSpec This method uses information about the shortest route that is found by the Open Route Service API between
-	 *  the start and the destination.
 	 * @param carID ID as returned by the {@code getCar} method
 	 * @param mix Used electricity mix if the car is powered by electricity. Otherwise {@code null}.
 	 * @param urbanKM Travel distance in kilometers within urban areas. Note that this includes all parts of the route
@@ -230,13 +220,13 @@ public class VehicleCO2Calculator extends AbstractRESTfulAgentBean {
 	@Path("/v2/calculation/length/emissions/car")
 	@Produces("application/json")
 	@Expose(scope = ActionScope.WEBSERVICE)
-	public ObjectNode v2CalculationEmissionsCarByLength(@QueryParam("carID") String carID,
+	public ObjectNode calculateCarEmissionsByRouteLength(@QueryParam("carID") String carID,
 														@QueryParam("mix") String mix,
 														@QueryParam("urbanKM") double urbanKM,
 														@QueryParam("nonUrbanKM") double nonUrbanKM,
 														@QueryParam("autobahnKM") double autobahnKM)
 	{
-		log.info("New REST request - v2CalculationEmissionsCarByLength(...) called");
+		log.info("New method invocation - calculateCarEmissionsByRouteLength(...) called");
 
 		Driver driver = new Driver(properties);
 
@@ -281,20 +271,21 @@ public class VehicleCO2Calculator extends AbstractRESTfulAgentBean {
 	 * @param startLongitude Longitude of the routes starting point
 	 * @param destinationLatitude Latitude of the routes destination
 	 * @param destinationLongitude Longitude of the routes destination
-	 * @return JSON formatted field containing the estimated CO2 emissions for the given car and the given start/end point.
+	 * @return JSON formatted field containing the estimated CO2 emissions for the given car and the given start/end point
+	 *  and a very rough estimate of the corresponding emissions using public transport
 	 */
 	@GET
 	@Path("/v2/calculation/locations/emissions/car")
 	@Produces("application/json")
 	@Expose(scope = ActionScope.WEBSERVICE)
-	public ObjectNode v2CalculationEmissionsCar(@QueryParam("carID") String carID,
+	public ObjectNode calculateCarEmissionsByCoordinates(@QueryParam("carID") String carID,
 											@QueryParam("mix") String mix,
 											@QueryParam("startLatitude") double startLatitude,
 											@QueryParam("startLongitude") double startLongitude,
 											@QueryParam("destinationLatitude") double destinationLatitude,
 											@QueryParam("destinationLongitude") double destinationLongitude)
 	{
-		log.info("New REST request - v2CalculationEmissionsCar(...) called");
+		log.info("New method invocation - calculateCarEmissionsByCoordinates(...) called");
 
 		Driver driver = new Driver(properties);
 
@@ -337,6 +328,7 @@ public class VehicleCO2Calculator extends AbstractRESTfulAgentBean {
 	 * Calculate the CO2 emissions for using public transport (excluding air traffic) on a route, that consists of
 	 *  {@code shortDistanceKM} kilometers short distance transportation (local bus traffic, underground and [sub]urban railway)
 	 *  and {@code longDistanceKM} kilometers long distance transportation (mainline rail services and regional trains).
+	 *  Note that this method returns only a very rough estimate.
 	 * @param shortDistanceKM Travel distance in kilometers using local bus traffic, underground and [sub]urban railway
 	 * @param longDistanceKM Travel distance in kilometers using regional trains and mainline rail services.
 	 * @return Estimated CO2 emissions for the given route information
@@ -345,10 +337,10 @@ public class VehicleCO2Calculator extends AbstractRESTfulAgentBean {
 	@Path("/calculation/emissions/publictransport")
 	@Produces("application/json")
 	@Expose(scope = ActionScope.WEBSERVICE)
-	public ObjectNode v1CalculationEmissionsPT(@QueryParam("shortDistanceKM") double shortDistanceKM,
+	public ObjectNode calculatePublicTransportEmissions(@QueryParam("shortDistanceKM") double shortDistanceKM,
 										   @QueryParam("longDistanceKM") double longDistanceKM)
 	{
-		log.info("New REST request - v1CalculationEmissionsPT(...) called");
+		log.info("New method invocation - calculatePublicTransportEmissions(...) called");
 
 		PublicTransportRoute route = new PublicTransportRoute(shortDistanceKM, longDistanceKM);
 		Double emissions = CO2Calculator.calculatePublicTransportEmissions(route);
@@ -360,8 +352,7 @@ public class VehicleCO2Calculator extends AbstractRESTfulAgentBean {
 		return result;
 	}
 
-
-
+	
 	/************************************************************/
 	/************************* LOCATION *************************/
 	/************************************************************/
@@ -375,8 +366,8 @@ public class VehicleCO2Calculator extends AbstractRESTfulAgentBean {
 	@Path("/locations/search")
 	@Produces("application/json")
 	@Expose(scope = ActionScope.WEBSERVICE)
-	public JsonNode v2LocationsSearch(@QueryParam("query") String query) {
-		log.info("New REST request - v2LocationsSearch(...) called");
+	public JsonNode getLocations(@QueryParam("query") String query) {
+		log.info("New method invocation - getLocations(...) called");
 
 		JsonNode places = null;
 		try {
