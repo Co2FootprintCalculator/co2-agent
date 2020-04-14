@@ -16,94 +16,39 @@
     </properties>
 
     <dependencies>
-        <!-- JIAC FRAMEWORK -->
+
         <dependency>
             <groupId>de.dailab.jiactng</groupId>
             <artifactId>agentCore</artifactId>
             <version>5.2.4</version>
+            <scope>compile</scope>
         </dependency>
+
         <dependency>
             <groupId>de.dailab.jiactng.basicServices</groupId>
             <artifactId>RESTfulServices</artifactId>
             <version>5.2.3</version>
-        </dependency>
-        <dependency>
-            <groupId>de.dailab.jiactng.tools</groupId>
-            <artifactId>AgentWebViewer</artifactId>
-            <version>5.2.3</version>
+            <scope>compile</scope>
         </dependency>
 
-
-        <!-- TESTING -->
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <version>5.5.2</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.vintage</groupId>
-            <artifactId>junit-vintage-engine</artifactId>
-            <version>5.5.2</version>
-            <scope>test</scope>
-        </dependency>
-
-
-        <!-- USED FOR CONSUMING REST API -->
-        <dependency>
-            <groupId>org.glassfish.jersey.core</groupId>
-            <artifactId>jersey-client</artifactId>
-            <version>2.29.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.jersey.inject</groupId>
-            <artifactId>jersey-hk2</artifactId>
-            <version>2.29.1</version>
-        </dependency>
-        <!--<dependency>
-            <groupId>org.clojure</groupId>
-            <artifactId>java.jdbc</artifactId>
-            <version>0.7.11</version>
-        </dependency>-->
-        <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
-            <version>20160810</version>
-        </dependency>
-        <!--<dependency>
-            <groupId>org.asynchttpclient</groupId>
-            <artifactId>async-http-client</artifactId>
-            <version>2.10.1</version>
-        </dependency>-->
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>6.0.6</version>
-        </dependency>
-        <!--<dependency>
-            <groupId>com.opencsv</groupId>
-            <artifactId>opencsv</artifactId>
-            <version>4.0</version>
-        </dependency>-->
-        <dependency>
-            <groupId>org.asynchttpclient</groupId>
-            <artifactId>async-http-client</artifactId>
-            <version>2.10.5</version>
-        </dependency>
         <dependency>
             <groupId>com.opencsv</groupId>
             <artifactId>opencsv</artifactId>
             <version>5.1</version>
         </dependency>
-        
 
-
-        <!-- USED FOR CONVERTING BETWEEN JSON AND JAVA OBJECTS -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>2.10.0.pr3</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>2.10.0.pr3</version>
+        </dependency>
+
     </dependencies>
 
     <repositories>
