@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 class OpenRouteServiceAccessor {
 
-	private String API_KEY;
+	private final String API_KEY;
 
 	public OpenRouteServiceAccessor(CO2FootprintProperties properties) {
 		this.API_KEY = properties.getOpenRouteServiceAPIKey();

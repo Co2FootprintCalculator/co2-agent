@@ -11,19 +11,19 @@ import java.util.Properties;
 public class CO2FootprintProperties {
 
 	// API-Keys
-	private String OpenRouteServiceAPIKey;
+	private final String OpenRouteServiceAPIKey;
 
 	// How many rows of the car database shall be downloaded? Set it to "-1" for all rows
-	private Integer CarDatabaseRows;
+	private final Integer CarDatabaseRows;
 
 	// MySQL Cache Database
-	private String CacheDatabaseHost;
-	private String CacheDatabasePort;
-	private String CacheDatabaseName;
+	private final String CacheDatabaseHost;
+	private final String CacheDatabasePort;
+	private final String CacheDatabaseName;
 	private String CacheDatabaseTableName;
-	private String CacheDatabaseUser;
-	private String CacheDatabasePassword;
-	private String CacheDatabaseUseSSL;
+	private final String CacheDatabaseUser;
+	private final String CacheDatabasePassword;
+	private final String CacheDatabaseUseSSL;
 
 	public CO2FootprintProperties() throws MissingRequiredPropertiesException, IOException {
 		Properties properties = new Properties();
@@ -85,9 +85,5 @@ public class CO2FootprintProperties {
 
 	public String getCacheDatabaseTableName() {
 		return CacheDatabaseTableName;
-	}
-
-	public void setCacheDatabaseTableName(String cacheDatabaseTableName) {
-		CacheDatabaseTableName = cacheDatabaseTableName;
 	}
 }

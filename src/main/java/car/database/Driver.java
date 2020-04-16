@@ -23,27 +23,25 @@ import static car.database.RestConsumer.translateFuelToAgentRepresentation;
 
 public class Driver {
 
-	private Connection myConn;
+	private final Connection myConn;
 
-	private CO2FootprintProperties properties;
+	private final CO2FootprintProperties properties;
 
-	public Driver(CO2FootprintProperties properties) {
+	public Driver(CO2FootprintProperties properties) throws SQLException, ClassNotFoundException {
 		this.properties = properties;
-		try {
-			myConn = DriverManager.getConnection("jdbc:mysql://" +
-							properties.getCacheDatabaseHost() +
-							":" +
-							properties.getCacheDatabasePort() +
-							"/" +
-							properties.getCacheDatabaseName() +
-							"?autoReconnect=true&useSSL=" +
-							properties.getCacheDatabaseUseSSL() +
-							"&rewriteBatchedStatements=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Europe/Berlin",
-					properties.getCacheDatabaseUser(),
-					properties.getCacheDatabasePassword());
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+
+		Class.forName("com.mysql.jdbc.Driver");
+		myConn = DriverManager.getConnection("jdbc:mysql://" +
+						properties.getCacheDatabaseHost() +
+						":" +
+						properties.getCacheDatabasePort() +
+						"/" +
+						properties.getCacheDatabaseName() +
+						"?autoReconnect=true&useSSL=" +
+						properties.getCacheDatabaseUseSSL() +
+						"&rewriteBatchedStatements=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Europe/Berlin",
+				properties.getCacheDatabaseUser(),
+				properties.getCacheDatabasePassword());
 	}
 
 	public void close() throws SQLException {
