@@ -17,10 +17,7 @@ import routing.Place;
 import routing.PublicTransportRoute;
 import util.CO2FootprintProperties;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -56,7 +53,7 @@ public class VehicleCO2Calculator extends AbstractRESTfulAgentBean {
 	 * @return All implemented electricity mixes as a JSON formatted list. Currently {@code de} for the general electricity
 	 *  mix of germany and {@code de_eco} for the german electricity mix with a higher share of renewable energy.
 	 */
-	@GET
+	@POST
 	@Path("/util/electricity/mixes")
 	@Produces("application/json")
 	@Expose(scope = ActionScope.WEBSERVICE)
@@ -74,7 +71,7 @@ public class VehicleCO2Calculator extends AbstractRESTfulAgentBean {
 	 * Retrieves all available brands from the underlying database.
 	 * @return JSON formatted list of brands
 	 */
-	@GET
+	@POST
 	@Path("/v2/cars/brands")
 	@Produces("application/json")
 	@Expose(scope = ActionScope.WEBSERVICE)
@@ -94,7 +91,7 @@ public class VehicleCO2Calculator extends AbstractRESTfulAgentBean {
 	 * @param brand One of the brands returned by the {@code getBrands} method
 	 * @return JSON formatted list of available models for {@code brand} parameter
 	 */
-	@GET
+	@POST
 	@Path("/v2/cars/brand/models")
 	@Produces("application/json")
 	@Expose(scope = ActionScope.WEBSERVICE)
@@ -114,7 +111,7 @@ public class VehicleCO2Calculator extends AbstractRESTfulAgentBean {
 	 * @param fuel One of the fuel types returned by the {@code mixes} method
 	 * @return JSON formatted list of available models for {@code brand} and {@code fuel} parameter
 	 */
-	@GET
+	@POST
 	@Path("/v2/cars/brand/fuel/models")
 	@Produces("application/json")
 	@Expose(scope = ActionScope.WEBSERVICE)
@@ -136,7 +133,7 @@ public class VehicleCO2Calculator extends AbstractRESTfulAgentBean {
 	 * @return JSON formatted list of available drive configurations for the {@code brand} and {@code model} parameters.
 	 *  Returns a subset or all of the following: {@code {petrol, diesel, cng, electricity}}
 	 */
-	@GET
+	@POST
 	@Path("/v2/cars/brand/model/fuel")
 	@Produces("application/json")
 	@Expose(scope = ActionScope.WEBSERVICE)
@@ -157,7 +154,7 @@ public class VehicleCO2Calculator extends AbstractRESTfulAgentBean {
 	 * @return JSON formatted list of available drive configurations for the {@code brand} parameter.
 	 *  Returns a subset or all of the following: {@code {petrol, diesel, cng, electricity}}
 	 */
-	@GET
+	@POST
 	@Path("/v2/cars/brand/fuel")
 	@Produces("application/json")
 	@Expose(scope = ActionScope.WEBSERVICE)
@@ -178,7 +175,7 @@ public class VehicleCO2Calculator extends AbstractRESTfulAgentBean {
 	 * @param fuel One of the drive configurations returned by the {@code fuel} method
 	 * @return JSON formatted id field
 	 */
-	@GET
+	@POST
 	@Path("/v2/cars/brand/model/fuel/id")
 	@Produces("application/json")
 	@Expose(scope = ActionScope.WEBSERVICE)
@@ -216,7 +213,7 @@ public class VehicleCO2Calculator extends AbstractRESTfulAgentBean {
 	 *                   the maximum speed is above 100 km/h.
 	 * @return JSON formatted field containing the estimated CO2 emissions for the given car and the given start/end point.
 	 */
-	@GET
+	@POST
 	@Path("/v2/calculation/length/emissions/car")
 	@Produces("application/json")
 	@Expose(scope = ActionScope.WEBSERVICE)
@@ -228,7 +225,12 @@ public class VehicleCO2Calculator extends AbstractRESTfulAgentBean {
 	{
 		log.info("New method invocation - calculateCarEmissionsByRouteLength(...) called");
 
-		Driver driver = new Driver(properties);
+		Driver driver = null;
+		try {
+			driver = new Driver(properties);
+		} catch (SQLException | ClassNotFoundException throwables) {
+			throwables.printStackTrace();
+		}
 
 		Car car = null;
 
@@ -274,7 +276,7 @@ public class VehicleCO2Calculator extends AbstractRESTfulAgentBean {
 	 * @return JSON formatted field containing the estimated CO2 emissions for the given car and the given start/end point
 	 *  and a very rough estimate of the corresponding emissions using public transport
 	 */
-	@GET
+	@POST
 	@Path("/v2/calculation/locations/emissions/car")
 	@Produces("application/json")
 	@Expose(scope = ActionScope.WEBSERVICE)
@@ -287,7 +289,12 @@ public class VehicleCO2Calculator extends AbstractRESTfulAgentBean {
 	{
 		log.info("New method invocation - calculateCarEmissionsByCoordinates(...) called");
 
-		Driver driver = new Driver(properties);
+		Driver driver = null;
+		try {
+			driver = new Driver(properties);
+		} catch (SQLException | ClassNotFoundException throwables) {
+			throwables.printStackTrace();
+		}
 
 		Car car = null;
 
@@ -333,7 +340,7 @@ public class VehicleCO2Calculator extends AbstractRESTfulAgentBean {
 	 * @param longDistanceKM Travel distance in kilometers using regional trains and mainline rail services.
 	 * @return Estimated CO2 emissions for the given route information
 	 */
-	@GET
+	@POST
 	@Path("/calculation/emissions/publictransport")
 	@Produces("application/json")
 	@Expose(scope = ActionScope.WEBSERVICE)
@@ -352,7 +359,7 @@ public class VehicleCO2Calculator extends AbstractRESTfulAgentBean {
 		return result;
 	}
 
-	
+
 	/************************************************************/
 	/************************* LOCATION *************************/
 	/************************************************************/
@@ -362,7 +369,7 @@ public class VehicleCO2Calculator extends AbstractRESTfulAgentBean {
 	 * @param query Address or name of a venue.
 	 * @return JSON formatted list of search results, each with its corresponding latitude and longitude.
 	 */
-	@GET
+	@POST
 	@Path("/locations/search")
 	@Produces("application/json")
 	@Expose(scope = ActionScope.WEBSERVICE)
