@@ -21,20 +21,15 @@ import java.util.HashMap;
 
 public class RestConsumer {
 
-	private final Client client;
-	private CO2FootprintProperties properties;
+	private final CO2FootprintProperties properties;
 
 	public RestConsumer(CO2FootprintProperties properties) {
-		this.client = ClientBuilder.newClient();
 		this.properties = properties;
-	}
-
-	public void close() {
-		client.close();
 	}
 
 	public ObjectNode getBrandsAsJson() throws JsonProcessingException {
 		// request brands from remote database
+		Client client = ClientBuilder.newClient();
 		String url = "https://data.opendatasoft.com/api/v2/catalog/datasets/vehicules-commercialises%40public/aggregates?select=marque&group_by=marque";
 		WebTarget webTarget = client.target(url);
 		Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
@@ -48,6 +43,7 @@ public class RestConsumer {
 
 		for (JsonNode jsonNode : responseNode.get("aggregations")) addedNode.add(jsonNode.get("marque"));
 
+		client.close();
 		return resultNode;
 	}
 
@@ -58,6 +54,7 @@ public class RestConsumer {
 
 		url = url.replaceAll(" ", "%20");
 
+		Client client = ClientBuilder.newClient();
 		WebTarget webTarget = client.target(url);
 		Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
 		Response response = invocationBuilder.get();
@@ -71,6 +68,7 @@ public class RestConsumer {
 		for (JsonNode jsonNode : responseNode.get("aggregations"))
 			addedNode.add(jsonNode.get("designation_commerciale"));
 
+		client.close();
 		return resultNode;
 
 	}
@@ -84,6 +82,7 @@ public class RestConsumer {
 
 		url = url.replaceAll(" ", "%20");
 
+		Client client = ClientBuilder.newClient();
 		WebTarget webTarget = client.target(url);
 		Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
 		Response response = invocationBuilder.get();
@@ -98,6 +97,7 @@ public class RestConsumer {
 			addedNode.add(fuel);
 		}
 
+		client.close();
 		return resultNode;
 	}
 
@@ -116,6 +116,7 @@ public class RestConsumer {
 
 		url = url.replaceAll(" ", "%20");
 
+		Client client = ClientBuilder.newClient();
 		WebTarget webTarget = client.target(url);
 		Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
 		Response response = invocationBuilder.get();
@@ -123,6 +124,7 @@ public class RestConsumer {
 		JsonNode responseNode = objectMapper.readTree(response.readEntity(String.class));
 		resultNode.put("id", responseNode.get("records").findValuesAsText("id").get(0));
 
+		client.close();
 		return resultNode;
 	}
 
@@ -135,6 +137,7 @@ public class RestConsumer {
 
 		url = url.replaceAll(" ", "%20");
 
+		Client client = ClientBuilder.newClient();
 		WebTarget webTarget = client.target(url);
 		Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
 		Response response = invocationBuilder.get();
@@ -150,10 +153,11 @@ public class RestConsumer {
 		carMap.put("officialCO2", objectNode.get("fields").get("co2_g_km").asText());
 		carMap.put("fuel", translateFuelToAgentRepresentation(objectNode.get("fields").get("carburant").asText()));
 
+		client.close();
 		return carMap;
 	}
 
-	public InputStream downloadDatabase() throws IOException, InterruptedException {
+	public InputStream downloadDatabase() throws IOException {
 		URL url = new URL("https://data.opendatasoft.com/api/v2/catalog/datasets/vehicules-commercialises%40public/exports/csv?rows=" + properties.getCarDatabaseRows() + "&timezone=UTC&delimiter=%3B");
 
 		URLConnection urlConnection = url.openConnection();
