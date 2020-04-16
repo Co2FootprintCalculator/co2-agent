@@ -31,7 +31,6 @@ public class Car {
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
-		restConsumer.close();
 
 		// set local variables
 		this.id = id;
