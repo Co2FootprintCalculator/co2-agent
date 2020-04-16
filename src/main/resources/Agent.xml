@@ -7,20 +7,20 @@
     <bean name="CO2EmissionsAgent" parent="NonBlockingAgent" scope="prototype">
         <property name="agentBeans">
             <list>
-                <ref bean="RESTfulBean"/>
+                <ref bean="VehicleCO2Calculator"/>
                 <ref bean="CarDatabaseBean"/>
             </list>
         </property>
     </bean>
 
-    <bean name="RESTfulBean" class="beans.VehicleCO2Calculator" scope="prototype">
-        <property name="logLevel" value="INFO"/>
+    <bean name="VehicleCO2Calculator" class="beans.VehicleCO2Calculator" scope="prototype">
+        <property name="logLevel" value="ALL"/>
     </bean>
 
     <bean name="CarDatabaseBean" class="beans.CarDatabaseBean" scope="prototype">
         <property name="executionInterval" value="86400000"/>
         <property name="executeImmediately" value="true"/>
-        <property name="logLevel" value="INFO"/>
+        <property name="logLevel" value="ALL"/>
     </bean>
     
 </beans>
