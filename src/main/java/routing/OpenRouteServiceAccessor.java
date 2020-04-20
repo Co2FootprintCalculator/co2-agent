@@ -35,6 +35,8 @@ class OpenRouteServiceAccessor {
 	}
 
 	public ArrayList<Place> searchPlace(String query) throws JsonProcessingException {
+		Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+
 		String url = "https://api.openrouteservice.org/geocode/search?api_key="
 				+ API_KEY
 				+ "&text="
