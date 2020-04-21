@@ -28,6 +28,7 @@ public class RestConsumer {
 	}
 
 	public ObjectNode getBrandsAsJson() throws JsonProcessingException {
+		Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 		// request brands from remote database
 		Client client = ClientBuilder.newClient();
 		String url = "https://data.opendatasoft.com/api/v2/catalog/datasets/vehicules-commercialises%40public/aggregates?select=marque&group_by=marque";
@@ -48,6 +49,7 @@ public class RestConsumer {
 	}
 
 	public ObjectNode getModelsAsJson(String brand) throws JsonProcessingException {
+		Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 		String url = "https://data.opendatasoft.com/api/v2/catalog/datasets/vehicules-commercialises%40public/aggregates?select=designation_commerciale&group_by=designation_commerciale&where=marque%20like%20%22"
 				+ brand
 				+ "%22";
@@ -74,6 +76,7 @@ public class RestConsumer {
 	}
 
 	public ObjectNode getFuelAsJson(String brand, String model) throws JsonProcessingException {
+		Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 		String url = "https://data.opendatasoft.com/api/v2/catalog/datasets/vehicules-commercialises%40public/aggregates?select=carburant&group_by=carburant&where=marque%20like%20%22" +
 				brand +
 				"%22%20and%20designation_commerciale%20like%20%22" +
@@ -102,6 +105,7 @@ public class RestConsumer {
 	}
 
 	public ObjectNode getCarIdAsJson(String brand, String model, String fuel) throws JsonProcessingException {
+		Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 		ObjectMapper objectMapper = new ObjectMapper();
 		ObjectNode resultNode = objectMapper.createObjectNode();
 
@@ -129,6 +133,7 @@ public class RestConsumer {
 	}
 
 	public HashMap<String, String> getCarData(String carID) throws JsonProcessingException {
+		Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 		HashMap<String, String> carMap = new HashMap<>();
 
 		String url = "https://data.opendatasoft.com/api/v2/catalog/datasets/vehicules-commercialises%40public/records/"

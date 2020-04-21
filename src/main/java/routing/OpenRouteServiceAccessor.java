@@ -20,6 +20,8 @@ class OpenRouteServiceAccessor {
 	}
 
 	public Response calculateRoute(Place start, Place destination) {
+		Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+
 		String url = "https://api.openrouteservice.org/v2/directions/driving-car/json";
 		String body = "{\"coordinates\":[["
 				+ start.getLongitude() + "," + start.getLatitude() + "],["
