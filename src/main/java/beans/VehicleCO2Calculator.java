@@ -8,10 +8,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import de.dailab.jiactng.agentcore.action.AbstractMethodExposingBean;
 import de.dailab.jiactng.agentcore.action.Action;
 import de.dailab.jiactng.agentcore.action.scope.ActionScope;
 import de.dailab.jiactng.agentcore.ontology.IActionDescription;
-import de.dailab.jiactng.rsga.beans.AbstractRESTfulAgentBean;
 import routing.CarRoute;
 import routing.Place;
 import routing.PublicTransportRoute;
@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 @SuppressWarnings("DanglingJavadoc")
-public class VehicleCO2Calculator extends AbstractRESTfulAgentBean {
+public class VehicleCO2Calculator extends AbstractMethodExposingBean {
 
 	private CO2FootprintProperties properties;
 
@@ -58,9 +58,9 @@ public class VehicleCO2Calculator extends AbstractRESTfulAgentBean {
 	 * mix of germany and {@code de_eco} for the german electricity mix with a higher share of renewable energy.
 	 */
 	@POST
-	@Path("/util/electricity/mixes")
+	@Path("/getElectricityMixes")
 	@Produces(MediaType.APPLICATION_JSON)
-	@Expose(name = "getElectricityMixes", scope = ActionScope.WEBSERVICE)
+	@Expose(scope = ActionScope.WEBSERVICE)
 	public String getElectricityMixes() {
 		log.info("New method invocation - getElectricityMixes() called");
 
@@ -88,9 +88,9 @@ public class VehicleCO2Calculator extends AbstractRESTfulAgentBean {
 	 * @return JSON formatted list of brands
 	 */
 	@POST
-	@Path("/v2/cars/brands")
+	@Path("/getBrands")
 	@Produces(MediaType.APPLICATION_JSON)
-	@Expose(name = "getBrands", scope = ActionScope.WEBSERVICE)
+	@Expose(scope = ActionScope.WEBSERVICE)
 	public String getBrands() {
 		log.info("New method invocation - getBrands() called");
 
@@ -118,9 +118,9 @@ public class VehicleCO2Calculator extends AbstractRESTfulAgentBean {
 	 * @return JSON formatted list of available models for {@code brand} parameter
 	 */
 	@POST
-	@Path("/v2/cars/brand/models")
+	@Path("/getModelsByBrand")
 	@Produces(MediaType.APPLICATION_JSON)
-	@Expose(name = "getModelsByBrand", scope = ActionScope.WEBSERVICE)
+	@Expose(scope = ActionScope.WEBSERVICE)
 	public String getModelsByBrand(@QueryParam("brand") String brand) {
 		log.info("New method invocation - getModelsByBrand(...) called");
 		IActionDescription template = new Action("ACTION#beans.CarDatabaseBean.getModels");
@@ -147,9 +147,9 @@ public class VehicleCO2Calculator extends AbstractRESTfulAgentBean {
 	 * @return JSON formatted list of available models for {@code brand} and {@code fuel} parameter
 	 */
 	@POST
-	@Path("/v2/cars/brand/fuel/models")
+	@Path("/getModelsByBrandAndFuel")
 	@Produces({MediaType.APPLICATION_JSON})
-	@Expose(name = "getModelsByBrandAndFuel", scope = ActionScope.WEBSERVICE)
+	@Expose(scope = ActionScope.WEBSERVICE)
 	public String getModelsByBrandAndFuel(@QueryParam("brand") String brand,
 	                                      @QueryParam("fuel") String fuel) {
 		log.info("New method invocation - getModelsByBrandAndFuel(...) called");
@@ -178,9 +178,9 @@ public class VehicleCO2Calculator extends AbstractRESTfulAgentBean {
 	 * Returns a subset or all of the following: {@code {petrol, diesel, cng, electricity}}
 	 */
 	@POST
-	@Path("/v2/cars/brand/model/fuel")
+	@Path("/getFuelByBrandAndModel")
 	@Produces(MediaType.APPLICATION_JSON)
-	@Expose(name = "getFuelByBrandAndModel", scope = ActionScope.WEBSERVICE)
+	@Expose(scope = ActionScope.WEBSERVICE)
 	public String getFuelByBrandAndModel(@QueryParam("brand") String brand,
 	                                     @QueryParam("model") String model) {
 		log.info("New method invocation - getFuelByBrandAndModel(...) called");
@@ -208,9 +208,9 @@ public class VehicleCO2Calculator extends AbstractRESTfulAgentBean {
 	 * Returns a subset or all of the following: {@code {petrol, diesel, cng, electricity}}
 	 */
 	@POST
-	@Path("/v2/cars/brand/fuel")
+	@Path("/getFuelByBrand")
 	@Produces(MediaType.APPLICATION_JSON)
-	@Expose(name = "getFuelByBrand", scope = ActionScope.WEBSERVICE)
+	@Expose(scope = ActionScope.WEBSERVICE)
 	public String getFuelByBrand(@QueryParam("brand") String brand) {
 		log.info("New method invocation - getFuelByBrand(...) called");
 		IActionDescription template = new Action("ACTION#beans.CarDatabaseBean.getFuelByBrand");
@@ -238,9 +238,9 @@ public class VehicleCO2Calculator extends AbstractRESTfulAgentBean {
 	 * @return JSON formatted id field
 	 */
 	@POST
-	@Path("/v2/cars/brand/model/fuel/id")
+	@Path("/getCarId")
 	@Produces(MediaType.APPLICATION_JSON)
-	@Expose(name = "getCarId", scope = ActionScope.WEBSERVICE)
+	@Expose(scope = ActionScope.WEBSERVICE)
 	public String getCarId(@QueryParam("brand") String brand,
 	                       @QueryParam("model") String model,
 	                       @QueryParam("fuel") String fuel) {
@@ -255,7 +255,7 @@ public class VehicleCO2Calculator extends AbstractRESTfulAgentBean {
 		String val = null;
 		ObjectMapper objectMapper = new ObjectMapper();
 		try {
-			objectMapper.writeValueAsString(carId);
+			val = objectMapper.writeValueAsString(carId);
 		} catch (JsonProcessingException e) {
 			log.error(e.getMessage(), e);
 		}
@@ -285,9 +285,9 @@ public class VehicleCO2Calculator extends AbstractRESTfulAgentBean {
 	 * @return JSON formatted field containing the estimated CO2 emissions for the given car and the given start/end point.
 	 */
 	@POST
-	@Path("/v2/calculation/length/emissions/car")
+	@Path("/calculateCarEmissionsByRouteLength")
 	@Produces(MediaType.APPLICATION_JSON)
-	@Expose(name = "calculateCarEmissionsByRouteLength", scope = ActionScope.WEBSERVICE)
+	@Expose(scope = ActionScope.WEBSERVICE)
 	public String calculateCarEmissionsByRouteLength(@QueryParam("carID") String carID,
 	                                                 @QueryParam("mix") String mix,
 	                                                 @QueryParam("urbanKM") double urbanKM,
@@ -354,9 +354,9 @@ public class VehicleCO2Calculator extends AbstractRESTfulAgentBean {
 	 * the start and the destination.
 	 */
 	@POST
-	@Path("/v2/calculation/locations/emissions/car")
+	@Path("/calculateCarEmissionsByCoordinates")
 	@Produces(MediaType.APPLICATION_JSON)
-	@Expose(name = "calculateCarEmissionsByCoordinates", scope = ActionScope.WEBSERVICE)
+	@Expose(scope = ActionScope.WEBSERVICE)
 	public String calculateCarEmissionsByCoordinates(@QueryParam("carID") String carID,
 	                                                 @QueryParam("mix") String mix,
 	                                                 @QueryParam("startLatitude") double startLatitude,
@@ -421,9 +421,9 @@ public class VehicleCO2Calculator extends AbstractRESTfulAgentBean {
 	 * @return Estimated CO2 emissions for the given route information
 	 */
 	@POST
-	@Path("/calculation/emissions/publictransport")
+	@Path("/calculatePublicTransportEmissions")
 	@Produces(MediaType.APPLICATION_JSON)
-	@Expose(name = "calculatePublicTransportEmissions", scope = ActionScope.WEBSERVICE)
+	@Expose(scope = ActionScope.WEBSERVICE)
 	public String calculatePublicTransportEmissions(@QueryParam("shortDistanceKM") double shortDistanceKM,
 	                                                @QueryParam("longDistanceKM") double longDistanceKM) {
 		log.info("New method invocation - calculatePublicTransportEmissions(...) called");
@@ -457,9 +457,9 @@ public class VehicleCO2Calculator extends AbstractRESTfulAgentBean {
 	 * @return JSON formatted list of search results, each with its corresponding latitude and longitude.
 	 */
 	@POST
-	@Path("/locations/search")
+	@Path("/getLocations")
 	@Produces(MediaType.APPLICATION_JSON)
-	@Expose(name = "getLocations", scope = ActionScope.WEBSERVICE)
+	@Expose(scope = ActionScope.WEBSERVICE)
 	public String getLocations(@QueryParam("query") String query) {
 		log.info("New method invocation - getLocations(...) called");
 
